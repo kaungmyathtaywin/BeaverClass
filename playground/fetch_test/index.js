@@ -15,13 +15,13 @@ const prevPrev = {
 const main = async () => {
   const config = {
     method: "post",
-    url: "https://classes.oregonstate.edu/api/?page=fose&route=search&alias=CS*",
+    url: "https://classes.oregonstate.edu/api/?page=fose&route=search&alias=AI*",
     headers: {
       "Content-Type": "application/json",
     },
     data: JSON.stringify({
       other: { srcdb: "999999" },
-      criteria: [{ field: "alias", value: "CS*" }],
+      criteria: [{ field: "alias", value: "AI*" }],
     }),
   }
 
@@ -43,7 +43,7 @@ const cs599 = {
 
 const urlFetch = "https://classes.oregonstate.edu/api/?page=fose&route=details"
 
-const token = ""
+const token = "HBVMnVertGwtNd48mbOc5z7t2h1ZIs7j9z0xgNn6bPo"
 const notify_req = axios.create({
   baseURL: `https://notify-api.line.me/api/notify`,
   headers: {
@@ -52,11 +52,11 @@ const notify_req = axios.create({
   },
 })
 
-const notify = async message => {
-  const msg = `message=${message}
-  https://classes.oregonstate.edu/?keyword=cs599&srcdb=999999`
-  await notify_req.post("/", msg)
-}
+// const notify = async message => {
+//   const msg = `message=${message}
+//   https://classes.oregonstate.edu/?keyword=cs599&srcdb=999999`
+//   await notify_req.post("/", msg)
+// }
 
 const main2 = async () => {
   const config = {
@@ -76,6 +76,8 @@ const main2 = async () => {
       ssbsect_wait_count, // people are waiting in the class
       ssbsect_wait_avail, // available to join waitlist
     } = response.data
+
+    console.log(response.data)
     const numberAvailabelForWaitlist = +ssbsect_wait_avail
     let formattedMessage = `class "cs599 cloud development" \n`
     let notifyIncrease = false
@@ -86,7 +88,7 @@ const main2 = async () => {
       prevPrev.cs599 = +enrollment
     }
     const time = moment().tz("America/Los_Angeles").format("YYYY-MM-DD HH:mm:ss")
-	  console.log("last run at:", time)
+    console.log("last run at:", time)
 
     formattedMessage =
       time +
@@ -96,17 +98,19 @@ const main2 = async () => {
   available to join waitlist ${numberAvailabelForWaitlist}
   waitlist capacity: ${ssbsect_wait_count}/${waitlist_capacity}`
     if (notifyIncrease || +max_enroll - +enrollment > 0 || numberAvailabelForWaitlist > 0) {
-      await notify(formattedMessage)
+      // await notify(formattedMessage)
     }
   } catch (error) {
     const time = moment().tz("America/Los_Angeles").format("YYYY-MM-DD HH:mm:ss")
-	  console.log("last run error at:", time)
+    console.log("last run error at:", time)
     console.error(error)
   }
 }
 
-cron.schedule("*/1 * * * *", async () => {
-  await main2()
-})
+// cron.schedule("*/1 * * * *", async () => {
+// await main2()
+// })
 
 // main2()
+
+main()
