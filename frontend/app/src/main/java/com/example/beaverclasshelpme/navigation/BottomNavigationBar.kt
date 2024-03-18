@@ -6,7 +6,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.example.beaverclasshelpme.Screen
+import com.example.beaverclasshelpme.ui.pages.Screen
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {

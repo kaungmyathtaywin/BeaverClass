@@ -44,9 +44,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.beaverclasshelpme.navigation.BottomNavigationBar
 import com.example.beaverclasshelpme.ui.pages.CartPage
-import com.example.beaverclasshelpme.ui.pages.LogoWithAppName
+import com.example.beaverclasshelpme.ui.pages.Screen
 import com.example.beaverclasshelpme.ui.pages.SearchPage
 import com.example.beaverclasshelpme.ui.pages.SettingsPage
+import com.example.beaverclasshelpme.ui.pages.SignInPage
+import com.example.beaverclasshelpme.ui.pages.SignUpPage
 import com.example.beaverclasshelpme.ui.theme.BeaverClassHelpMeTheme
 
 class MainActivity : ComponentActivity() {
@@ -69,6 +71,18 @@ class MainActivity : ComponentActivity() {
 // This is the main app
 @Composable
 fun BeaverClassApp() {
+    val isUserLoggedIn = true /* TODO: Hardcoded here */
+
+    // Have to use viewModel Auth
+    if (isUserLoggedIn) {
+       MainAppFlow()
+    } else {
+        AuthFlow()
+    }
+}
+
+@Composable
+fun MainAppFlow() {
     val navController = rememberNavController()
 
     Scaffold(
@@ -93,6 +107,23 @@ fun BeaverClassApp() {
                     ) }
             composable(Screen.Settings.route) { SettingsPage() }
         }
+    }
+}
+
+@Composable
+fun AuthFlow() {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = Screen.SignIn.route
+    ) {
+        composable(Screen.SignIn.route) { SignInPage(
+            onSignInClick = { /*TODO*/ },
+            onSignUpClick = { navController.navigate(Screen.SignUp.route) }
+        )}
+        composable(Screen.SignUp.route) { SignUpPage(
+            onSignUpClick = { /*TODO*/ },
+        )}
     }
 }
 
@@ -175,23 +206,6 @@ fun AddToCartPage(courseDetails: List<CourseDetail>, onAddClick: (CourseDetail) 
             }
         }
     }
-
-    Row(
-        modifier = Modifier.padding(16.dp),
-        verticalAlignment = Alignment.Bottom
-    ) {
-        IconButton(onClick = { /* navigate to home page */ }) {
-            Icon(Icons.Default.Home, contentDescription = "Home")
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { /* navigate to cart */ }) {
-            Icon(Icons.Default.ShoppingCart, contentDescription = "Cart")
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { /* navigate to settings */ }) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings")
-        }
-    }
 }
 
 @Composable
@@ -247,7 +261,6 @@ fun CartItemRow(item: CartItem, onDraftClick: (CartItem) -> Unit, onDeleteClick:
         Divider()
     }
 }
-
 
 @Composable
 fun DraftEmailPage(cartItem: CartItem) {

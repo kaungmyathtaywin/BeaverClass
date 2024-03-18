@@ -15,9 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
-fun SignUpPage(onSignUpClick: () -> Unit) {
+fun SignUpPage(
+    onSignUpClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()

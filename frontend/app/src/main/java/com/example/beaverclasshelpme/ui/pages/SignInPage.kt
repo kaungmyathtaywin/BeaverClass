@@ -13,10 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 
 @Composable
-fun SignInPage(onSignInClick: () -> Unit, onSignUpClick: () -> Unit) {
+fun SignInPage(
+    onSignInClick: () -> Unit,
+    onSignUpClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -25,18 +29,28 @@ fun SignInPage(onSignInClick: () -> Unit, onSignUpClick: () -> Unit) {
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = Modifier.height(50.dp))
+
         LogoWithAppName()
+
         Spacer(modifier = Modifier.height(50.dp))
+
         Text("Sign in", style = MaterialTheme.typography.labelLarge)
+
         Spacer(modifier = Modifier.height(16.dp))
+
         Text("Please login with Google", style = MaterialTheme.typography.labelLarge)
+
         Spacer(modifier = Modifier.height(50.dp))
+
         Button(onClick = onSignInClick) {
             Text("Sign In")
         }
+
         Spacer(modifier = Modifier.height(8.dp))
+
         Button(onClick = onSignUpClick) {
             Text("Sign Up")
         }
+
     }
 }
