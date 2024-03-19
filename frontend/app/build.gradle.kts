@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.gms.google-services")
+    id("com.google.devtools.ksp") version "1.9.22-1.0.17"
 }
 
 android {
@@ -73,4 +74,12 @@ dependencies {
 //    implementation("androidx.core:core-ktx:2.2.0")
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-analytics")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
+
+    implementation("com.squareup.moshi:moshi:1.15.0")
 }

@@ -8,4 +8,6 @@
 .idea/
 .DS_Store
 ./frontend/.DS_Store
+.gradle/*
 /frontend/.gradle
+./frontend/.gradle/*
