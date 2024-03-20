@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">BeaverClassHelpMe</string>
-
-    <string name="channel_id">Firebase Messaging ID</string>
-    <string name="channel_name">Firebase Messaging</string>
-</resources>
