@@ -16,7 +16,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -24,6 +27,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,8 +42,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.beaverclasshelpme.data.BackendService
+import com.example.beaverclasshelpme.data.SavedClass
 import com.example.beaverclasshelpme.data.TokenBody
 import com.example.beaverclasshelpme.navigation.BottomNavigationBar
+import com.example.beaverclasshelpme.ui.pages.HistoryPage
 import com.example.beaverclasshelpme.ui.pages.SelectedPage
 import com.example.beaverclasshelpme.ui.pages.Screen
 import com.example.beaverclasshelpme.ui.pages.SearchPage
@@ -57,6 +64,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val viewModel: TokenViewModel by viewModels()
+    private val saveClassViewModel: SavedClassViewModel by viewModels()
 
     private lateinit var preferencesManager: SharedPreferencesManager
 
@@ -64,6 +72,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         preferencesManager = SharedPreferencesManager(this)
+
+//        saveClassViewModel.addNewClass(SavedClass("59723", "Test", "CS599"))
 
         // Permission Request for external resources
         val requestPermissionLauncher =
@@ -112,7 +122,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    BeaverClassApp(preferencesManager)
+                    BeaverClassApp(
+                        preferencesManager, saveClassViewModel)
                 }
             }
         }
@@ -121,19 +132,21 @@ class MainActivity : ComponentActivity() {
 
 // This is the main app
 @Composable
-fun BeaverClassApp(preferencesManager: SharedPreferencesManager) {
+fun BeaverClassApp(preferencesManager: SharedPreferencesManager, viewModel: SavedClassViewModel) {
     val isUserLoggedIn = true /* TODO: Hardcoded here */
+
+//    viewModel.addNewClass(SavedClass("59723", "NewNow", "CS599"))
 
     // Have to use viewModel Auth
     if (isUserLoggedIn) {
-       MainAppFlow(preferencesManager)
+       MainAppFlow(preferencesManager, viewModel)
     } else {
         AuthFlow()
     }
 }
 
 @Composable
-fun MainAppFlow(preferencesManager: SharedPreferencesManager) {
+fun MainAppFlow(preferencesManager: SharedPreferencesManager, viewModel: SavedClassViewModel) {
     val navController = rememberNavController()
     val backendService = BackendService.create()
     val classRepository = ClassRepository(backendService, Dispatchers.IO)
@@ -147,7 +160,7 @@ fun MainAppFlow(preferencesManager: SharedPreferencesManager) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) { SearchPage(navController, preferencesManager) }
-            composable(Screen.Cart.route) {}
+            composable(Screen.Cart.route) { HistoryPage(savedClassViewModel = viewModel)}
             composable(Screen.Settings.route) {
                 SelectedPage(
                     navController = navController,
@@ -178,6 +191,7 @@ fun MainAppFlow(preferencesManager: SharedPreferencesManager) {
                 SearchResultPage(
                     preferencesManager,
                     classViewModel = classViewModel,
+                    savedClassViewModel = viewModel,
                     onAddClick = {
                         navController.navigate(Screen.Settings.route)
                     }

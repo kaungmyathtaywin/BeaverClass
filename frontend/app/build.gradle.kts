@@ -79,7 +79,13 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
 
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.9.22-1.0.17")
+
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
+    ksp("androidx.room:room-compiler:2.6.1")
 
     implementation("com.squareup.moshi:moshi:1.15.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.0.0-beta01")

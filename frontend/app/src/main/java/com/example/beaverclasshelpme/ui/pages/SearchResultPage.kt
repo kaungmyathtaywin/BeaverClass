@@ -1,6 +1,7 @@
 package com.example.beaverclasshelpme.ui.pages
 
 import android.provider.Settings.Global.getString
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,12 +19,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.beaverclasshelpme.ClassViewModel
 import com.example.beaverclasshelpme.Course
+import com.example.beaverclasshelpme.SavedClassViewModel
 import com.example.beaverclasshelpme.SharedPreferencesManager
+import com.example.beaverclasshelpme.data.SavedClass
 
 @Composable
 fun SearchResultPage(
     preferencesManager: SharedPreferencesManager,
     classViewModel: ClassViewModel,
+    savedClassViewModel: SavedClassViewModel,
     onAddClick: () -> Unit
 ) {
     val course by classViewModel.courseData.observeAsState()
@@ -52,11 +56,18 @@ fun SearchResultPage(
             Button(onClick = onAddClick) {
                 Text("Submit")
 
+                val crn = course!!.crn
+                val className = course!!.classTitle
+                val classCode = course!!.classCode
+
                 preferencesManager.saveData("class_name", course!!.classTitle)
                 preferencesManager.saveData("class_code", course!!.classCode)
                 preferencesManager.saveData("max_enrl", course!!.maxEntrl.toString())
+
+                val currentClass = SavedClass(crn, className, classCode)
+                Log.d("SearchResult", "${currentClass.classCode}")
+                savedClassViewModel.addNewClass(currentClass)
             }
         }
     }
-
 }
