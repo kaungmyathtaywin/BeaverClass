@@ -59,10 +59,10 @@ fun SelectedPage(
 
             Spacer(modifier = Modifier.height(16.dp))
             Row {
-                Button(onClick = onDraftClick, modifier = Modifier.weight(1f)) {
-                    Text("Draft")
-                }
-                Spacer(modifier = Modifier.width(8.dp))
+//                Button(onClick = onDraftClick, modifier = Modifier.weight(1f)) {
+//                    Text("Draft")
+//                }
+//                Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = {
                         preferencesManager.clearData()
