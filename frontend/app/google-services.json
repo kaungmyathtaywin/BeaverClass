@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1075846274667",
+    "project_id": "beaverclass-51cf8",
+    "storage_bucket": "beaverclass-51cf8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1075846274667:android:edba77b4c3b3302b6e1b2e",
+        "android_client_info": {
+          "package_name": "com.example.beaverclasshelpme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVSwHFb_EDtYIEKv9Wu9Sa5TYx3To-_Fo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
