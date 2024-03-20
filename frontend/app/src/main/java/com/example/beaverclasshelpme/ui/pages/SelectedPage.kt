@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -102,12 +103,12 @@ fun SelectedPage(
                     .align(Alignment.BottomEnd)
             ) {
                 Icon(
-                    imageVector = Icons.Default.ExitToApp,
+                    imageVector = Icons.Default.Clear,
                     contentDescription = "Logout",
                     modifier = Modifier.size(ButtonDefaults.IconSize)
                 )
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text("Logout")
+                Text("Clear History")
             }
         }
     }
