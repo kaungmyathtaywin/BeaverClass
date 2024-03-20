@@ -151,17 +151,14 @@ fun MainAppFlow() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) { SearchPage(navController) }
-            composable(Screen.Cart.route) { CartPage(cartItems,
-                        onDeleteClick = { item ->
-                            // deal with the delete item logic here
-                        },
-                        onSubmitClick = {
-                            // deal with the submit logic here
-                        },
-                        onDraftClick = { item ->
-                            // deal with the draft logic here
-                        }
-                    ) }
+            composable(Screen.Cart.route) {
+                CartPage(
+                    selectedClass = Course("CS 561", "Software Engineering I", "10293", 100, 50, "TR", "Corvallis"),
+                    onDeleteClick = { /* ... */ },
+                    onLogoutClick = { /* ... */ },
+                    onDraftClick = { /* ... */ }
+                )
+            }
             composable(Screen.Settings.route) { SettingsPage() }
             composable(
                 route = "search_result/{classCode}/{crn}/{term}",
