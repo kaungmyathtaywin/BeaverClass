@@ -17,4 +17,7 @@ interface SavedClassDao {
 
     @Query("SELECT * FROM SavedClass")
     fun getAllClasses(): Flow<List<SavedClass>>
+
+    @Query("DELETE FROM SavedClass")
+    suspend fun deleteAll()
 }

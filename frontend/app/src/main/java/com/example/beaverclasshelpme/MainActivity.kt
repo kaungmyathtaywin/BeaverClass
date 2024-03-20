@@ -166,7 +166,7 @@ fun MainAppFlow(preferencesManager: SharedPreferencesManager, viewModel: SavedCl
                     navController = navController,
                     preferencesManager,
                     onDeleteClick = {  },
-                    onLogoutClick = { /* ... */ },
+                    onLogoutClick = { viewModel.removeAllClasses() },
                     onDraftClick = { /* ... */ }
                 )
             }

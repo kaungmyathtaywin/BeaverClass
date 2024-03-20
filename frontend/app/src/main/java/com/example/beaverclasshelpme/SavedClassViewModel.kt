@@ -24,7 +24,13 @@ class SavedClassViewModel(application: Application) : AndroidViewModel(applicati
 
     fun removeSavedClass(myClass: SavedClass) {
         viewModelScope.launch {
-            repository.deleteSavedCity(myClass)
+            repository.deleteSavedClass(myClass)
+        }
+    }
+
+    fun removeAllClasses() {
+        viewModelScope.launch {
+            repository.deleteAllClasses()
         }
     }
 }

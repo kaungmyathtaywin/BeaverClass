@@ -21,7 +21,6 @@ import com.example.beaverclasshelpme.data.SavedClass
 fun HistoryPage(
     savedClassViewModel: SavedClassViewModel
 ) {
-
     val savedClasses by savedClassViewModel.savedClasses.observeAsState(initial = emptyList())
 
     Column(modifier = Modifier

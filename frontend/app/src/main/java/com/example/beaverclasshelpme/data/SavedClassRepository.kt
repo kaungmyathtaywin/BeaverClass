@@ -5,7 +5,9 @@ class SavedClassRepository(
 ) {
     suspend fun insertNewClass(myClass: SavedClass) = dao.insert(myClass)
 
-    suspend fun deleteSavedCity(myClass: SavedClass) = dao.delete(myClass)
+    suspend fun deleteSavedClass(myClass: SavedClass) = dao.delete(myClass)
 
     fun getAllSavedClasses() = dao.getAllClasses()
+
+    suspend fun deleteAllClasses() = dao.deleteAll()
 }
