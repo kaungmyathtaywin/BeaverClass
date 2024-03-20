@@ -73,8 +73,6 @@ class MainActivity : ComponentActivity() {
 
         preferencesManager = SharedPreferencesManager(this)
 
-//        saveClassViewModel.addNewClass(SavedClass("59723", "Test", "CS599"))
-
         // Permission Request for external resources
         val requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->

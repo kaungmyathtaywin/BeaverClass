@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -45,6 +46,7 @@ fun SelectedPage(
         .fillMaxSize()
         .padding(16.dp)) {
         Text("Selected Class", style = MaterialTheme.typography.headlineMedium)
+        Divider(modifier = Modifier.padding(vertical = 4.dp))
         
         if (className != null && classCode != null && maxEnrollment != null) {
             Spacer(modifier = Modifier.height(16.dp))
