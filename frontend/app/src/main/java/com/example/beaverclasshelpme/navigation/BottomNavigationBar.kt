@@ -12,7 +12,7 @@ import com.example.beaverclasshelpme.ui.pages.Screen
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         Screen.Home,
-        Screen.Cart,
+//        Screen.Cart,
         Screen.Settings
     )
 

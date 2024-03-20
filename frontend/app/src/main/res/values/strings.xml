@@ -3,4 +3,8 @@
 
     <string name="channel_id">Firebase Messaging ID</string>
     <string name="channel_name">Firebase Messaging</string>
+
+    <string name="pref_class_name">class_name</string>
+    <string name="pref_class_code">class_code</string>
+    <string name="pref_max_enrl">max_enrl</string>
 </resources>

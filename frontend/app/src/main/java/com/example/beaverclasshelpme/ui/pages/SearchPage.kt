@@ -24,10 +24,14 @@ import androidx.navigation.NavController
 import com.example.beaverclasshelpme.data.BackendService
 import com.example.beaverclasshelpme.ClassRepository
 import com.example.beaverclasshelpme.ClassViewModel
+import com.example.beaverclasshelpme.SharedPreferencesManager
 import kotlinx.coroutines.Dispatchers
 
 @Composable
-fun SearchPage(navController: NavController) {
+fun SearchPage(
+    navController: NavController,
+    sharedPreferencesManager: SharedPreferencesManager
+) {
     var term by remember { mutableStateOf("") }
     var classTitle by remember { mutableStateOf("") }
     var classCode by remember { mutableStateOf("") }
@@ -43,9 +47,10 @@ fun SearchPage(navController: NavController) {
             return ClassViewModel(classRepository) as T
         }
     })
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(text = "BeaverClassHelpMe", style = MaterialTheme.typography.displaySmall)
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
@@ -53,12 +58,6 @@ fun SearchPage(navController: NavController) {
             onValueChange = { term = it },
             label = { Text("Term") }
         )
-//        Spacer(modifier = Modifier.height(8.dp))
-//        TextField(
-//            value = classTitle,
-//            onValueChange = { classTitle = it },
-//            label = { Text("Class Title") }
-//        )
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
             value = classCode,
@@ -85,8 +84,5 @@ fun SearchPage(navController: NavController) {
         ) {
             Text("Search")
         }
-
     }
-
-
 }

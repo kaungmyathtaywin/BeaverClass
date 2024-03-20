@@ -17,7 +17,6 @@ class ClassViewModel(
     private val _errorMessage = MutableLiveData<String?>(null)
     val errorMessage: LiveData<String?> = _errorMessage
 
-
     fun loadClassData(classCode: String, crn: String, term: String) {
         viewModelScope.launch {
             try {

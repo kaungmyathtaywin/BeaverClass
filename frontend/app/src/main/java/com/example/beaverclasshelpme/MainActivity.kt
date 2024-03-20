@@ -11,31 +11,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -51,11 +39,10 @@ import androidx.navigation.navArgument
 import com.example.beaverclasshelpme.data.BackendService
 import com.example.beaverclasshelpme.data.TokenBody
 import com.example.beaverclasshelpme.navigation.BottomNavigationBar
-import com.example.beaverclasshelpme.ui.pages.CartPage
+import com.example.beaverclasshelpme.ui.pages.SelectedPage
 import com.example.beaverclasshelpme.ui.pages.Screen
 import com.example.beaverclasshelpme.ui.pages.SearchPage
 import com.example.beaverclasshelpme.ui.pages.SearchResultPage
-import com.example.beaverclasshelpme.ui.pages.SettingsPage
 import com.example.beaverclasshelpme.ui.pages.SignInPage
 import com.example.beaverclasshelpme.ui.pages.SignUpPage
 import com.example.beaverclasshelpme.ui.theme.BeaverClassHelpMeTheme
@@ -71,8 +58,12 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: TokenViewModel by viewModels()
 
+    private lateinit var preferencesManager: SharedPreferencesManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        preferencesManager = SharedPreferencesManager(this)
 
         // Permission Request for external resources
         val requestPermissionLauncher =
@@ -104,7 +95,7 @@ class MainActivity : ComponentActivity() {
             val token = task.result
 
             /* TODO: Hardcoded email here */
-            val data = TokenBody("htaywink@gmail.com", token)
+            val data = TokenBody("hk@gmail.com", token)
             val jsonObject = Gson().toJsonTree(data).asJsonObject
 
             viewModel.submitToken(jsonObject)
@@ -121,7 +112,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    BeaverClassApp()
+                    BeaverClassApp(preferencesManager)
                 }
             }
         }
@@ -130,19 +121,19 @@ class MainActivity : ComponentActivity() {
 
 // This is the main app
 @Composable
-fun BeaverClassApp() {
+fun BeaverClassApp(preferencesManager: SharedPreferencesManager) {
     val isUserLoggedIn = true /* TODO: Hardcoded here */
 
     // Have to use viewModel Auth
     if (isUserLoggedIn) {
-       MainAppFlow()
+       MainAppFlow(preferencesManager)
     } else {
         AuthFlow()
     }
 }
 
 @Composable
-fun MainAppFlow() {
+fun MainAppFlow(preferencesManager: SharedPreferencesManager) {
     val navController = rememberNavController()
     val backendService = BackendService.create()
     val classRepository = ClassRepository(backendService, Dispatchers.IO)
@@ -155,16 +146,17 @@ fun MainAppFlow() {
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Home.route) { SearchPage(navController) }
-            composable(Screen.Cart.route) {
-                CartPage(
-                    selectedClass = Course("CS 561", "Software Engineering I", "10293", 100, 50, "TR", "Corvallis"),
-                    onDeleteClick = { /* ... */ },
+            composable(Screen.Home.route) { SearchPage(navController, preferencesManager) }
+            composable(Screen.Cart.route) {}
+            composable(Screen.Settings.route) {
+                SelectedPage(
+                    navController = navController,
+                    preferencesManager,
+                    onDeleteClick = {  },
                     onLogoutClick = { /* ... */ },
                     onDraftClick = { /* ... */ }
                 )
             }
-            composable(Screen.Settings.route) { SettingsPage() }
             composable(
                 route = "search_result/{classCode}/{crn}/{term}",
                 arguments = listOf(
@@ -183,9 +175,13 @@ fun MainAppFlow() {
 
                 classViewModel.loadClassData(classCode, crn, term)
 
-                SearchResultPage(classViewModel = classViewModel, navController = navController) {
-                    // Todo: deal with the add to cart logic here
-                }
+                SearchResultPage(
+                    preferencesManager,
+                    classViewModel = classViewModel,
+                    onAddClick = {
+                        navController.navigate(Screen.Settings.route)
+                    }
+                )
             }
         }
     }
@@ -205,141 +201,6 @@ fun AuthFlow() {
         composable(Screen.SignUp.route) { SignUpPage(
             onSignUpClick = { /*TODO*/ },
         )}
-    }
-}
-
-//val courseList = listOf(
-//    Course("CS 561", "Software Engineering I"),
-//    Course("CS 562", "Software Engineering II"),
-//    Course("CS 563", "Software Engineering III"),
-//)
-
-//@Composable
-//fun SearchResultPage(courses: List<Course>) {
-//    Column(modifier = Modifier.fillMaxSize()) {
-//        Text("Search Result", style = MaterialTheme.typography.displaySmall, modifier = Modifier.padding(16.dp))
-//        LazyColumn {
-//            items(courses) { course ->
-//                CourseItem(course, onClick = {
-//                    // the operations when you click the item in the list
-//                })
-//            }
-//        }
-//    }
-//    Row(
-//        modifier = Modifier.padding(16.dp),
-//        verticalAlignment = Alignment.Bottom
-//    ) {
-//        IconButton(onClick = { /* navigate to home page */ }) {
-//            Icon(Icons.Default.Home, contentDescription = "Home")
-//        }
-//        Spacer(modifier = Modifier.weight(1f))
-//        IconButton(onClick = { /* navigate to cart */ }) {
-//            Icon(Icons.Default.ShoppingCart, contentDescription = "Cart")
-//        }
-//        Spacer(modifier = Modifier.weight(1f))
-//        IconButton(onClick = { /* navigate to settings */ }) {
-//            Icon(Icons.Default.Settings, contentDescription = "Settings")
-//        }
-//    }
-//}
-
-//@Composable
-//fun CourseItem(course: Course, onClick: () -> Unit) {
-//    Card(
-//        modifier = Modifier
-//            .padding(horizontal = 8.dp, vertical = 4.dp)
-//            .fillMaxWidth()
-//            .clickable(onClick = onClick),
-//
-//    ) {
-//        Column(modifier = Modifier.padding(16.dp)) {
-//            Text(course.id, style = MaterialTheme.typography.bodyMedium)
-//            Text(course.title, style = MaterialTheme.typography.bodyMedium)
-//            Divider()
-//        }
-//    }
-//}
-
-val courseDetails = listOf(
-    CourseDetail("10293", "Corvallis", "TR 4 - 5:50pm", 135, 88),
-    CourseDetail("10294", "Cascade", "MW 10 - 11:50pm", 30, 17),
-    CourseDetail("10295", "Ecampus", "", 49, 49),
-)
-
-@Composable
-fun AddToCartPage(courseDetails: List<CourseDetail>, onAddClick: (CourseDetail) -> Unit) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text("Add class to cart", style = MaterialTheme.typography.displaySmall, modifier = Modifier.padding(16.dp))
-
-        Row(modifier = Modifier.padding(8.dp)) {
-            Text("CRN", modifier = Modifier.weight(1f))
-            Text("Campus", modifier = Modifier.weight(1f))
-            Text("Meets", modifier = Modifier.weight(1f))
-            Text("Max Enrl", modifier = Modifier.weight(1f))
-            Text("Actual Enrl", modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.width(68.dp))
-        }
-
-        LazyColumn {
-            items(courseDetails) { detail ->
-                CourseDetailItem(detail, onAddClick)
-            }
-        }
-    }
-}
-
-@Composable
-fun CourseDetailItem(courseDetail: CourseDetail, onAddClick: (CourseDetail) -> Unit) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(8.dp)) {
-        Text(courseDetail.crn, modifier = Modifier.weight(1f))
-        Text(courseDetail.campus, modifier = Modifier.weight(1f))
-        Text(courseDetail.meets, modifier = Modifier.weight(1f))
-        Text("${courseDetail.maxEnrl}", modifier = Modifier.weight(1f))
-        Text("${courseDetail.actualEnrl}", modifier = Modifier.weight(1f))
-        Button(onClick = { onAddClick(courseDetail) }) {
-            Text("Add")
-        }
-    }
-}
-
-val cartItems = listOf(
-    CartItem("10976", "CS 561", "Software Engineering I", "TR 4 - 5:50pm"),
-    CartItem("10977", "CS 562", "Software Engineering II", "MW 10 - 11:50am"),
-    CartItem("10978", "CS 563", "Software Engineering III", "WF 3 - 4:50pm"),
-)
-
-@Composable
-fun CartItemRow(item: CartItem, onDraftClick: (CartItem) -> Unit, onDeleteClick: (CartItem) -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = "CRN ${item.crn}", modifier = Modifier.weight(1f))
-            Text(text = item.title, modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                onClick = { onDraftClick(item) },
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Draft")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                onClick = { onDeleteClick(item) },
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Delete")
-            }
-        }
-        Text(text = "Meets: ${item.meets}", modifier = Modifier.padding(vertical = 4.dp))
-        Divider()
     }
 }
 
@@ -375,45 +236,5 @@ fun DraftEmailPage(cartItem: CartItem) {
         ) {
             Text("Copy to clipboard")
         }
-
-    }
-    Row(
-        modifier = Modifier.padding(16.dp),
-        verticalAlignment = Alignment.Bottom
-    ) {
-        IconButton(onClick = { /* navigate to home page */ }) {
-            Icon(Icons.Default.Home, contentDescription = "Home")
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { /* navigate to cart */ }) {
-            Icon(Icons.Default.ShoppingCart, contentDescription = "Cart")
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { /* navigate to settings */ }) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings")
-        }
-    }
-}
-
-// Todo: for LogoutDialog we can decide if we want this function or not
-@Composable
-fun LogoutDialog(isOpen: MutableState<Boolean>, onConfirm: () -> Unit, onDismiss: () -> Unit) {
-    if (isOpen.value) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text("Are you sure you want to logout?") },
-            confirmButton = {
-                Button(onClick = {
-                    onConfirm()
-                    isOpen.value = false
-                }) { Text("Yes") }
-            },
-            dismissButton = {
-                Button(onClick = {
-                    onDismiss()
-                    isOpen.value = false
-                }) { Text("No") }
-            }
-        )
     }
 }
