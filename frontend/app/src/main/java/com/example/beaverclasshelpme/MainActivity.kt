@@ -46,22 +46,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.beaverclasshelpme.navigation.BottomNavigationBar
 import com.example.beaverclasshelpme.ui.pages.CartPage
 import com.example.beaverclasshelpme.ui.pages.Screen
 import com.example.beaverclasshelpme.ui.pages.SearchPage
+import com.example.beaverclasshelpme.ui.pages.SearchResultPage
 import com.example.beaverclasshelpme.ui.pages.SettingsPage
 import com.example.beaverclasshelpme.ui.pages.SignInPage
 import com.example.beaverclasshelpme.ui.pages.SignUpPage
 import com.example.beaverclasshelpme.ui.theme.BeaverClassHelpMeTheme
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.Dispatchers
 
 class MainActivity : ComponentActivity() {
-
     companion object {
         private const val TAG = "MainActivity"
     }
@@ -133,6 +139,8 @@ fun BeaverClassApp() {
 @Composable
 fun MainAppFlow() {
     val navController = rememberNavController()
+    val backendService = BackendService.create()
+    val classRepository = ClassRepository(backendService, Dispatchers.IO)
 
     Scaffold(
         bottomBar = { BottomNavigationBar(navController = navController) }
@@ -142,7 +150,7 @@ fun MainAppFlow() {
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Home.route) { SearchPage() }
+            composable(Screen.Home.route) { SearchPage(navController) }
             composable(Screen.Cart.route) { CartPage(cartItems,
                         onDeleteClick = { item ->
                             // deal with the delete item logic here
@@ -155,6 +163,28 @@ fun MainAppFlow() {
                         }
                     ) }
             composable(Screen.Settings.route) { SettingsPage() }
+            composable(
+                route = "search_result/{classCode}/{crn}/{term}",
+                arguments = listOf(
+                    navArgument("classCode") { type = NavType.StringType },
+                    navArgument("crn") { type = NavType.StringType },
+                    navArgument("term") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val classCode = backStackEntry.arguments?.getString("classCode") ?: ""
+                val crn = backStackEntry.arguments?.getString("crn") ?: ""
+                val term = backStackEntry.arguments?.getString("term") ?: ""
+
+                val classViewModel: ClassViewModel = viewModel(key = "ClassViewModel_$classCode$crn$term") {
+                    ClassViewModel(classRepository)
+                }
+
+                classViewModel.loadClassData(classCode, crn, term)
+
+                SearchResultPage(classViewModel = classViewModel, navController = navController) {
+                    // Todo: deal with the add to cart logic here
+                }
+            }
         }
     }
 }
@@ -176,58 +206,58 @@ fun AuthFlow() {
     }
 }
 
-val courseList = listOf(
-    Course("CS 561", "Software Engineering I"),
-    Course("CS 562", "Software Engineering II"),
-    Course("CS 563", "Software Engineering III"),
-)
+//val courseList = listOf(
+//    Course("CS 561", "Software Engineering I"),
+//    Course("CS 562", "Software Engineering II"),
+//    Course("CS 563", "Software Engineering III"),
+//)
 
-@Composable
-fun SearchResultPage(courses: List<Course>) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text("Search Result", style = MaterialTheme.typography.displaySmall, modifier = Modifier.padding(16.dp))
-        LazyColumn {
-            items(courses) { course ->
-                CourseItem(course, onClick = {
-                    // the operations when you click the item in the list
-                })
-            }
-        }
-    }
-    Row(
-        modifier = Modifier.padding(16.dp),
-        verticalAlignment = Alignment.Bottom
-    ) {
-        IconButton(onClick = { /* navigate to home page */ }) {
-            Icon(Icons.Default.Home, contentDescription = "Home")
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { /* navigate to cart */ }) {
-            Icon(Icons.Default.ShoppingCart, contentDescription = "Cart")
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { /* navigate to settings */ }) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings")
-        }
-    }
-}
+//@Composable
+//fun SearchResultPage(courses: List<Course>) {
+//    Column(modifier = Modifier.fillMaxSize()) {
+//        Text("Search Result", style = MaterialTheme.typography.displaySmall, modifier = Modifier.padding(16.dp))
+//        LazyColumn {
+//            items(courses) { course ->
+//                CourseItem(course, onClick = {
+//                    // the operations when you click the item in the list
+//                })
+//            }
+//        }
+//    }
+//    Row(
+//        modifier = Modifier.padding(16.dp),
+//        verticalAlignment = Alignment.Bottom
+//    ) {
+//        IconButton(onClick = { /* navigate to home page */ }) {
+//            Icon(Icons.Default.Home, contentDescription = "Home")
+//        }
+//        Spacer(modifier = Modifier.weight(1f))
+//        IconButton(onClick = { /* navigate to cart */ }) {
+//            Icon(Icons.Default.ShoppingCart, contentDescription = "Cart")
+//        }
+//        Spacer(modifier = Modifier.weight(1f))
+//        IconButton(onClick = { /* navigate to settings */ }) {
+//            Icon(Icons.Default.Settings, contentDescription = "Settings")
+//        }
+//    }
+//}
 
-@Composable
-fun CourseItem(course: Course, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 4.dp)
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(course.id, style = MaterialTheme.typography.bodyMedium)
-            Text(course.title, style = MaterialTheme.typography.bodyMedium)
-            Divider()
-        }
-    }
-}
+//@Composable
+//fun CourseItem(course: Course, onClick: () -> Unit) {
+//    Card(
+//        modifier = Modifier
+//            .padding(horizontal = 8.dp, vertical = 4.dp)
+//            .fillMaxWidth()
+//            .clickable(onClick = onClick),
+//
+//    ) {
+//        Column(modifier = Modifier.padding(16.dp)) {
+//            Text(course.id, style = MaterialTheme.typography.bodyMedium)
+//            Text(course.title, style = MaterialTheme.typography.bodyMedium)
+//            Divider()
+//        }
+//    }
+//}
 
 val courseDetails = listOf(
     CourseDetail("10293", "Corvallis", "TR 4 - 5:50pm", 135, 88),

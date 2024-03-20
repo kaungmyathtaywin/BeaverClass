@@ -82,4 +82,5 @@ dependencies {
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
 
     implementation("com.squareup.moshi:moshi:1.15.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.0.0-beta01")
 }
