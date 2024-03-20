@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
             val token = task.result
 
             /* TODO: Hardcoded email here */
-            val data = TokenBody("hk@gmail.com", token)
+            val data = TokenBody("htaywink@oregonstate.edu", token)
             val jsonObject = Gson().toJsonTree(data).asJsonObject
 
             tokenViewModel.submitToken(jsonObject)
@@ -167,6 +167,7 @@ fun MainAppFlow(
             composable(Screen.Cart.route) { HistoryPage(savedClassViewModel = viewModel)}
             composable(Screen.Settings.route) {
                 SelectedPage(
+                    tokenViewModel = tokenViewModel,
                     navController = navController,
                     preferencesManager,
                     onDeleteClick = {  },

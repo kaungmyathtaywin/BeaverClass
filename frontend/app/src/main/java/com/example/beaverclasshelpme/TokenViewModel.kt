@@ -18,6 +18,9 @@ class TokenViewModel : ViewModel() {
 
     private val _responseClass = MutableLiveData<TokenResponse?>(null)
     val responseClass: LiveData<TokenResponse?> = _responseClass
+
+    private val _responseClassDelete = MutableLiveData<TokenResponse?>(null)
+    val responseClassDelete: LiveData<TokenResponse?> = _responseClassDelete
     fun submitToken(body: JsonObject) {
         viewModelScope.launch {
             val result = repository.addToken(body)
@@ -31,6 +34,14 @@ class TokenViewModel : ViewModel() {
             val resultData = repository.addClassData(body)
 
             _responseClass.value = resultData.getOrNull()
+        }
+    }
+
+    fun deleteClassData(body: JsonObject) {
+        viewModelScope.launch {
+            val resultDataDelete = repository.deleteClassData(body)
+
+            _responseClassDelete.value = resultDataDelete.getOrNull()
         }
     }
 }

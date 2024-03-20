@@ -7,7 +7,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -26,6 +28,11 @@ interface BackendService {
 
     @POST("cart")
     suspend fun postClassData(
+        @Body body: JsonObject
+    ): Response<TokenResponse>
+
+    @HTTP(method = "DELETE", path = "cart", hasBody = true)
+    suspend fun deleteClassData(
         @Body body: JsonObject
     ): Response<TokenResponse>
 

@@ -1,6 +1,5 @@
 package com.example.beaverclasshelpme.ui.pages
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +23,6 @@ import com.example.beaverclasshelpme.SharedPreferencesManager
 import com.example.beaverclasshelpme.TokenViewModel
 import com.example.beaverclasshelpme.data.SaveDataBody
 import com.example.beaverclasshelpme.data.SavedClass
-import com.example.beaverclasshelpme.data.TokenBody
 import com.google.gson.Gson
 
 @Composable
@@ -74,11 +72,12 @@ fun SearchResultPage(
                     preferencesManager.saveData("class_name", course!!.classTitle)
                     preferencesManager.saveData("class_code", course!!.classCode)
                     preferencesManager.saveData("max_enrl", course!!.maxEntrl.toString())
+                    preferencesManager.saveData("crn", course!!.crn)
 
                     val currentClass = SavedClass(crn, className, classCode)
                     savedClassViewModel.addNewClass(currentClass)
 
-                    val data = SaveDataBody("hello@gmail.com", crn, classCode)
+                    val data = SaveDataBody("htaywink@oregonstate.edu", crn, classCode)
                     val jsonObject = Gson().toJsonTree(data).asJsonObject
                     tokenViewModel.submitClassData(jsonObject)
                 }
