@@ -29,9 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.beaverclasshelpme.ClassViewModel
 import com.example.beaverclasshelpme.SharedPreferencesManager
+import com.example.beaverclasshelpme.TokenViewModel
+import com.example.beaverclasshelpme.data.ClassBody
+import com.example.beaverclasshelpme.data.SaveDataBody
+import com.google.gson.Gson
 
 @Composable
 fun SelectedPage(
+    tokenViewModel: TokenViewModel,
     navController: NavController,
     preferencesManager: SharedPreferencesManager,
     onDeleteClick: () -> Unit,
@@ -65,7 +70,13 @@ fun SelectedPage(
 //                Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = {
+                        val data = ClassBody("htaywink@oregonstate.edu")
+                        val jsonObject = Gson().toJsonTree(data).asJsonObject
+
+                        tokenViewModel.deleteClassData(jsonObject)
+
                         preferencesManager.clearData()
+
                         navController.navigate(Screen.Home.route)
                     },
                     modifier = Modifier.weight(1f)
