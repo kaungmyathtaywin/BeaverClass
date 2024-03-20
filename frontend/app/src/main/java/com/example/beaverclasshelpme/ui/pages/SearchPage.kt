@@ -35,11 +35,9 @@ fun SearchPage(navController: NavController) {
     var crn by remember { mutableStateOf("") }
     val backendService = BackendService.create()
 
-    // 如果您的ClassRepository需要一個CoroutineDispatcher，您可以如下創建它
     val ioDispatcher = Dispatchers.IO
     val classRepository = ClassRepository(backendService, ioDispatcher)
 
-    // 使用viewModel()創建ClassViewModel的實例
     val classViewModel: ClassViewModel = viewModel(factory = object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")
