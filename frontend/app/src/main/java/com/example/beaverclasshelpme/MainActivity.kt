@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Telephony.Mms.Draft
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -39,6 +40,7 @@ import androidx.navigation.navArgument
 import com.example.beaverclasshelpme.data.BackendService
 import com.example.beaverclasshelpme.data.TokenBody
 import com.example.beaverclasshelpme.navigation.BottomNavigationBar
+import com.example.beaverclasshelpme.ui.pages.DraftEmailPage
 import com.example.beaverclasshelpme.ui.pages.HistoryPage
 import com.example.beaverclasshelpme.ui.pages.SelectedPage
 import com.example.beaverclasshelpme.ui.pages.Screen
@@ -136,7 +138,7 @@ fun BeaverClassApp(
 
     // Have to use viewModel Auth
     if (isUserLoggedIn) {
-       MainAppFlow(preferencesManager, viewModel, tokenViewModel)
+       MainAppFlow(preferencesManager, viewModel, tokenViewModel, emailViewModel = DraftEmailViewModel(emailRepository = EmailRepository(emailApiService = EmailApiService.create())))
     } else {
         AuthFlow()
     }
@@ -146,7 +148,8 @@ fun BeaverClassApp(
 fun MainAppFlow(
     preferencesManager: SharedPreferencesManager,
     viewModel: SavedClassViewModel,
-    tokenViewModel: TokenViewModel
+    tokenViewModel: TokenViewModel,
+    emailViewModel: DraftEmailViewModel
 ) {
     val navController = rememberNavController()
     val backendService = BackendService.create()
@@ -199,6 +202,11 @@ fun MainAppFlow(
                     }
                 )
             }
+            composable(Screen.DraftEmail.route) {
+                DraftEmailPage(
+                    emailViewModel = emailViewModel
+                )
+            }
         }
     }
 }
@@ -217,40 +225,5 @@ fun AuthFlow() {
         composable(Screen.SignUp.route) { SignUpPage(
             onSignUpClick = { /*TODO*/ },
         )}
-    }
-}
-
-@Composable
-fun DraftEmailPage(cartItem: CartItem) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Divider(modifier = Modifier.padding(vertical = 8.dp))
-        Text("Draft the email template and email to professor",
-            style = MaterialTheme.typography.displaySmall)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(cartItem.id, style = MaterialTheme.typography.bodyLarge)
-        Text(cartItem.title, style = MaterialTheme.typography.bodyLarge)
-        Text("CRN ${cartItem.crn} Meets: ${cartItem.meets}", style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(16.dp))
-        val emailText = remember { mutableStateOf("Hello Professor Ma,\n\nI am Josh, is there a chance that I can still enroll for this class?\n\nBest Regards,\nJosh") }
-        TextField(
-            value = emailText.value,
-            onValueChange = { emailText.value = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                // TODO: implement the function to copy to clipboard
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            Text("Copy to clipboard")
-        }
     }
 }
