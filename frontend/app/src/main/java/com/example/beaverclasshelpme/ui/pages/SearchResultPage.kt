@@ -1,6 +1,5 @@
 package com.example.beaverclasshelpme.ui.pages
 
-import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,18 +18,21 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.beaverclasshelpme.ClassViewModel
-import com.example.beaverclasshelpme.Course
 import com.example.beaverclasshelpme.SavedClassViewModel
 import com.example.beaverclasshelpme.SharedPreferencesManager
+import com.example.beaverclasshelpme.TokenViewModel
+import com.example.beaverclasshelpme.data.SaveDataBody
 import com.example.beaverclasshelpme.data.SavedClass
+import com.example.beaverclasshelpme.data.TokenBody
+import com.google.gson.Gson
 
 @Composable
 fun SearchResultPage(
     preferencesManager: SharedPreferencesManager,
     classViewModel: ClassViewModel,
     savedClassViewModel: SavedClassViewModel,
+    tokenViewModel: TokenViewModel,
     onAddClick: () -> Unit
 ) {
     val course by classViewModel.courseData.observeAsState()
@@ -74,8 +76,11 @@ fun SearchResultPage(
                     preferencesManager.saveData("max_enrl", course!!.maxEntrl.toString())
 
                     val currentClass = SavedClass(crn, className, classCode)
-                    Log.d("SearchResult", "${currentClass.classCode}")
                     savedClassViewModel.addNewClass(currentClass)
+
+                    val data = SaveDataBody("hello@gmail.com", crn, classCode)
+                    val jsonObject = Gson().toJsonTree(data).asJsonObject
+                    tokenViewModel.submitClassData(jsonObject)
                 }
             }
         }

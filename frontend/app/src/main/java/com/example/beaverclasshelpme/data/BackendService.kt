@@ -24,6 +24,11 @@ interface BackendService {
         @Body body: JsonObject
     ): Response<TokenResponse>
 
+    @POST("cart")
+    suspend fun postClassData(
+        @Body body: JsonObject
+    ): Response<TokenResponse>
+
     companion object {
         private const val BASE_URL = "https://mobile.thaiosu.com/api/"
 

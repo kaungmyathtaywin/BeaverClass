@@ -13,14 +13,24 @@ import kotlinx.coroutines.launch
 class TokenViewModel : ViewModel() {
     private val repository = TokenRepository(BackendService.createPOST())
 
-    private val _response = MutableLiveData<TokenResponse?>(null)
-    val response: LiveData<TokenResponse?> = _response
+    private val _responseToken = MutableLiveData<TokenResponse?>(null)
+    val responseToken: LiveData<TokenResponse?> = _responseToken
 
+    private val _responseClass = MutableLiveData<TokenResponse?>(null)
+    val responseClass: LiveData<TokenResponse?> = _responseClass
     fun submitToken(body: JsonObject) {
         viewModelScope.launch {
             val result = repository.addToken(body)
 
-            _response.value = result.getOrNull()
+            _responseToken.value = result.getOrNull()
+        }
+    }
+
+    fun submitClassData(body: JsonObject) {
+        viewModelScope.launch {
+            val resultData = repository.addClassData(body)
+
+            _responseClass.value = resultData.getOrNull()
         }
     }
 }

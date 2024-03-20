@@ -16,10 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,8 +24,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,7 +37,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.beaverclasshelpme.data.BackendService
-import com.example.beaverclasshelpme.data.SavedClass
 import com.example.beaverclasshelpme.data.TokenBody
 import com.example.beaverclasshelpme.navigation.BottomNavigationBar
 import com.example.beaverclasshelpme.ui.pages.HistoryPage
@@ -63,7 +57,7 @@ class MainActivity : ComponentActivity() {
         private const val TAG = "MainActivity"
     }
 
-    private val viewModel: TokenViewModel by viewModels()
+    private val tokenViewModel: TokenViewModel by viewModels()
     private val saveClassViewModel: SavedClassViewModel by viewModels()
 
     private lateinit var preferencesManager: SharedPreferencesManager
@@ -106,7 +100,7 @@ class MainActivity : ComponentActivity() {
             val data = TokenBody("hk@gmail.com", token)
             val jsonObject = Gson().toJsonTree(data).asJsonObject
 
-            viewModel.submitToken(jsonObject)
+            tokenViewModel.submitToken(jsonObject)
 
             // Log FMC token for notifications
             val msg = "FCM Registration Token: $token"
@@ -121,7 +115,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     BeaverClassApp(
-                        preferencesManager, saveClassViewModel)
+                        preferencesManager,
+                        saveClassViewModel,
+                        tokenViewModel
+                    )
                 }
             }
         }
@@ -130,21 +127,27 @@ class MainActivity : ComponentActivity() {
 
 // This is the main app
 @Composable
-fun BeaverClassApp(preferencesManager: SharedPreferencesManager, viewModel: SavedClassViewModel) {
+fun BeaverClassApp(
+    preferencesManager: SharedPreferencesManager,
+    viewModel: SavedClassViewModel,
+    tokenViewModel: TokenViewModel
+) {
     val isUserLoggedIn = true /* TODO: Hardcoded here */
-
-//    viewModel.addNewClass(SavedClass("59723", "NewNow", "CS599"))
 
     // Have to use viewModel Auth
     if (isUserLoggedIn) {
-       MainAppFlow(preferencesManager, viewModel)
+       MainAppFlow(preferencesManager, viewModel, tokenViewModel)
     } else {
         AuthFlow()
     }
 }
 
 @Composable
-fun MainAppFlow(preferencesManager: SharedPreferencesManager, viewModel: SavedClassViewModel) {
+fun MainAppFlow(
+    preferencesManager: SharedPreferencesManager,
+    viewModel: SavedClassViewModel,
+    tokenViewModel: TokenViewModel
+) {
     val navController = rememberNavController()
     val backendService = BackendService.create()
     val classRepository = ClassRepository(backendService, Dispatchers.IO)
@@ -190,6 +193,7 @@ fun MainAppFlow(preferencesManager: SharedPreferencesManager, viewModel: SavedCl
                     preferencesManager,
                     classViewModel = classViewModel,
                     savedClassViewModel = viewModel,
+                    tokenViewModel = tokenViewModel,
                     onAddClick = {
                         navController.navigate(Screen.Settings.route)
                     }

@@ -24,4 +24,20 @@ class TokenRepository(
                 Result.failure(e)
             }
         }
+
+    suspend fun addClassData(body: JsonObject): Result<TokenResponse> =
+        withContext(ioDispatcher) {
+            try {
+                val response = service.postClassData(body)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        Result.success(it)
+                    } ?: Result.failure(Exception("Empty response body"))
+                } else {
+                    Result.failure(Exception("HTTP error code: ${response.code()}"))
+                }
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
 }

@@ -79,7 +79,6 @@ fun SelectedPage(
             }
         }
 
-
         Box(modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)) {
@@ -92,9 +91,9 @@ fun SelectedPage(
                 Icon(
                     imageVector = Icons.Default.ExitToApp,
                     contentDescription = "Logout",
-                    modifier = Modifier.size(ButtonDefaults.IconSize) // Set the size for the icon
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
                 )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing)) // Add space between the icon and the text
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text("Logout")
             }
         }
