@@ -18,7 +18,7 @@ This Android application is designed to streamline class registration at Oregon 
 ## Table of Contents
 * [Features](#features)
 * [Built With](#built-with)
-* [Architecture and User Interface](#architecture-and-user-interface)
+* [Architecture](#architecture)
 * [Setup and Installation](#setup-and-installation)
 * [License](#license)
 
